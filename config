@@ -1,0 +1,173 @@
+### Appearance
+font pango:DejaVu Sans Mono 16
+
+gaps inner 8
+gaps outer 6
+
+default_border pixel 0
+default_floating_border pixel 2
+smart_borders no
+
+client.focused             #2f3436 #1d2021 #d4be98 #2f3436 #2f3436
+client.unfocused           #1d2021 #1d2021 #a89984 #1d2021 #1d2021
+client.focused_inactive    #1d2021 #1d2021 #a89984 #1d2021 #1d2021
+client.urgent              #ea6962 #1d2021 #d4be98 #ea6962 #ea6962
+client.placeholder         #45403d #1d2021 #a89984 #45403d #45403d
+
+output * bg /home/inopi/wallp/gruvbox/space.png fill
+output * resolution 1920x1080
+
+### Session / idle
+set $lock swaylock -f -i $HOME/wallp/gruvbox/gruvbox_minimal_space.png
+
+exec_always swayidle -w \
+    timeout 600 '$lock' \
+    timeout 660 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+    before-sleep '$lock'
+
+exec_always /usr/lib/hyprpolkitagent/hyprpolkitagent
+
+# Browser
+for_window [app_id="Tor Browser"] floating enable
+
+### Apps
+set $terminal    kitty
+set $menu        wofi --show drun
+set $browser     $HOME/Desktop/librewolf.AppImage --private-window
+set $tor         $HOME/tor-browser/Browser/start-tor-browser
+
+### Mod keys
+set $mod   Mod1
+set $alt   Mod4
+set $shift Shift
+
+### Terminal
+bindsym $mod+Return        exec $terminal
+bindsym $mod+$shift+Return  exec foot
+
+### Yazi
+bindsym $mod+e             exec kitty yazi
+
+### Applauncher
+bindsym $mod+r             exec $menu
+
+### Browser
+bindsym $mod+b             exec $browser
+bindsym $mod+$shift+b      exec $tor
+
+### Special
+bindsym $mod+d             exec kitty --title vim -e nvim
+bindsym $mod+a             exec kitty --title scratch -e nvim ~/notes/quick.md
+
+### Window control
+bindsym $mod+q             kill
+bindsym $mod+$shift+q       kill -9
+bindsym $mod+f             fullscreen toggle
+bindsym $mod+v             floating toggle
+
+### Focus / move
+bindsym $mod+h             focus left
+bindsym $mod+j             focus down
+bindsym $mod+k             focus up
+bindsym $mod+l             focus right
+
+bindsym $mod+Left          focus left
+bindsym $mod+Down          focus down
+bindsym $mod+Up            focus up
+bindsym $mod+Right         focus right
+
+bindsym $mod+$shift+h       move left
+bindsym $mod+$shift+j       move down
+bindsym $mod+$shift+k       move up
+bindsym $mod+$shift+l       move right
+
+### Resize
+mode "resize" {
+    bindsym h     resize shrink width 10px
+    bindsym j     resize grow height 10px
+    bindsym k     resize shrink height 10px
+    bindsym l     resize grow width 10px
+    bindsym Left  resize shrink width 10px
+    bindsym Down  resize grow height 10px
+    bindsym Up    resize shrink height 10px
+    bindsym Right resize grow width 10px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+$shift+r mode "resize"
+
+### Workspaces
+bindsym $mod+1 workspace number 1
+bindsym $mod+2 workspace number 2
+bindsym $mod+3 workspace number 3
+bindsym $mod+4 workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+0 workspace number 10
+
+bindsym $mod+$shift+1 move container to workspace number 1
+bindsym $mod+$shift+2 move container to workspace number 2
+bindsym $mod+$shift+3 move container to workspace number 3
+bindsym $mod+$shift+4 move container to workspace number 4
+bindsym $mod+$shift+5 move container to workspace number 5
+bindsym $mod+$shift+6 move container to workspace number 6
+bindsym $mod+$shift+7 move container to workspace number 7
+bindsym $mod+$shift+8 move container to workspace number 8
+bindsym $mod+$shift+9 move container to workspace number 9
+bindsym $mod+$shift+0 move container to workspace number 10
+
+bindsym $mod+Tab         workspace next
+bindsym $mod+$shift+Tab   workspace prev
+
+### Scratchpad
+bindsym $mod+s           scratchpad show
+bindsym $mod+$shift+s     move scratchpad
+
+### Power / system
+bindsym $mod+p           exec $HOME/.config/sway/scripts/power.sh
+bindsym $alt+$shift+l     exec $lock
+bindsym $mod+m           exit
+bindsym $mod+$shift+c     reload
+bindsym $mod+$shift+n     exec wlsunset -S 00:00 -s 00:01 -t 4999 -T 5000
+bindsym $mod+$shift+o     exec pkill wlsunset
+
+### Notifications
+bindsym $mod+n           exec swaync-client -t -sw
+
+### Mouse
+bindsym $mod+button1     move
+bindsym $mod+button3     resize
+
+### Audio / media
+bindsym XF86AudioRaiseVolume exec wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
+bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym XF86AudioMute        exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+bindsym XF86AudioMicMute     exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+
+bindsym XF86MonBrightnessUp   exec brightnessctl -e4 -n2 set 5%+
+bindsym XF86MonBrightnessDown exec brightnessctl -e4 -n2 set 5%-
+
+bindsym XF86AudioNext      exec playerctl next
+bindsym XF86AudioPause     exec playerctl play-pause
+bindsym XF86AudioPlay      exec playerctl play-pause
+bindsym XF86AudioPrev      exec playerctl previous
+
+### Screenshots
+bindsym Print        exec grim ~/Pictures/screenshot-$(date +%s).png
+bindsym $shift+Print  exec grim -g "$(slurp)" ~/Pictures/screenshot-$(date +%s).png
+
+bar {
+    swaybar_command waybar
+}
+
+# --- workspace behavior ---
+workspace_auto_back_and_forth yes
+focus_follows_mouse no
+
+# Optional: make new workspaces feel cleaner
+for_window [window_role="pop-up"] floating enable
+for_window [floating="on"] border pixel 2
+
